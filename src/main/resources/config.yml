@@ -1,0 +1,15 @@
+error-task-running: '&red&You cannot start a task while it''s running!'
+
+error-task-not-running: '&red&You cannot stop a task if it''s not running!'
+
+automated-task-status:
+  - '&yellow&Status for task: &green&%task_name%'
+  - '&gray&Repeated: &dark_green&%task_repeated%'
+  - '&gray&Running: &dark_green&%task_running%'
+  - '&gray&Last execution: &dark_green&%task_last_execution%'
+  - '&gray&Next execution: &dark_green&%task_next_execution%'
+  - '&gray&Commands: &dark_gray&%task_commands%'
+
+automated-task-list:
+  - '&green&Tasks (click them to see status)'
+  - '&gray&- [%task_name%](color=blue run_command=/at status %task_name% show_text=Click to see the status!)'

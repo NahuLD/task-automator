@@ -25,9 +25,9 @@ public class AutomatedTask implements ConfigurationSerializable {
     private static final Plugin PLUGIN = TaskAutomatorPlugin.getPlugin(TaskAutomatorPlugin.class);
 
     private final String name;
-    private Duration duration;
+    private final Duration duration;
     private long lastExecution;
-    private boolean repeated;
+    private final boolean repeated;
     private boolean running = false;
     private List<String> commands;
 
@@ -54,15 +54,6 @@ public class AutomatedTask implements ConfigurationSerializable {
         return name;
     }
 
-    @NotNull
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public void setDuration(@NotNull Duration duration) {
-        this.duration = duration;
-    }
-
     public long getLastExecution() {
         return lastExecution;
     }
@@ -73,10 +64,6 @@ public class AutomatedTask implements ConfigurationSerializable {
 
     public boolean isRepeated() {
         return repeated;
-    }
-
-    public void setRepeated(boolean repeated) {
-        this.repeated = repeated;
     }
 
     public boolean isRunning() {
@@ -102,7 +89,7 @@ public class AutomatedTask implements ConfigurationSerializable {
         this.task = new BukkitRunnable() {
             @Override
             public void run() {
-                executeCommands();
+                commands.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
                 if (repeated) {
                     startTask();
                     return;
@@ -126,6 +113,9 @@ public class AutomatedTask implements ConfigurationSerializable {
 
     @NotNull
     public String nextExecutionFormatted() {
+        if (!running) {
+            return "None";
+        }
         return DurationFormatUtils.formatDuration(
             nextExecutionInMillis(),
             "mm:ss"
@@ -140,10 +130,6 @@ public class AutomatedTask implements ConfigurationSerializable {
         return DATE_FORMATTER.format(
             Instant.ofEpochMilli(lastExecution).atZone(ZoneId.systemDefault()).toLocalDateTime()
         );
-    }
-
-    public void executeCommands() {
-        commands.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
     }
 
     @Override

@@ -2,7 +2,15 @@ testing:
   ==: me.nahu.taskautomator.task.AutomatedTask
   name: "testing"
   duration: '1m'
-  repeat: false
+  repeated: false
   commands:
     - say heckers!!!
     - say uwu owo uwu
+testing-repeating:
+  ==: me.nahu.taskautomator.task.AutomatedTask
+  name: "testing-repeating"
+  duration: '30s'
+  repeated: true
+  commands:
+    - say repeat repeat
+    - say hecking heckers

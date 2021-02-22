@@ -154,7 +154,6 @@ public class AutomatedTask implements ConfigurationSerializable {
         boolean repeated = args.containsKey("repeated") && (boolean) args.get("repeated");
         boolean running = args.containsKey("running") && (boolean) args.get("running");
         List<String> commands = (List<String>) args.get("commands");
-        System.out.println(duration.toString() + " " + duration.toMinutes());
         return new AutomatedTask(
             name,
             duration,

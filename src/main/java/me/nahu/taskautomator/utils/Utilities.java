@@ -17,7 +17,6 @@ public final class Utilities {
 
     @NotNull
     public static Duration parseDuration(@Nullable String input) {
-        System.out.println(input);
         Duration duration = Duration.ZERO;
         if (input == null || input.isEmpty()) {
             return duration;
@@ -26,7 +25,6 @@ public final class Utilities {
         while (matcher.find()) {
             int number = Integer.parseInt(matcher.group(1));
             String type = matcher.group(2).toLowerCase();
-            System.out.println(number + " " + type);
             switch (type) {
                 case "ns":
                     duration = duration.plusNanos(number);

@@ -3,6 +3,7 @@ package me.nahu.taskautomator;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.InvalidCommandArgument;
 import me.nahu.taskautomator.command.AutomatedTaskCommand;
+import me.nahu.taskautomator.papi.TaskAutomatorExtension;
 import me.nahu.taskautomator.task.AutomatedTask;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,6 +53,8 @@ public class TaskAutomatorPlugin extends JavaPlugin {
         commandManager.registerCommand(
             new AutomatedTaskCommand(getConfig(), tasksManager)
         );
+
+        new TaskAutomatorExtension(this).register();
     }
 
     @Override
@@ -62,5 +65,9 @@ public class TaskAutomatorPlugin extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public AutomatedTasksManager getTasksManager() {
+        return tasksManager;
     }
 }

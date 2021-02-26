@@ -48,6 +48,11 @@ repositories {
         url = uri("https://dl.bintray.com/nahuld/minevictus/")
     }
 
+    maven {
+        name = "placeholderapi"
+        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    }
+
     mavenCentral()
     jcenter()
 }
@@ -55,6 +60,7 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:20.1.0")
+    compileOnly("me.clip:placeholderapi:2.10.9")
     implementation("co.aikar:acf-bukkit:0.5.0-SNAPSHOT")
     implementation("de.themoep:minedown:1.6.2-SNAPSHOT")
 }

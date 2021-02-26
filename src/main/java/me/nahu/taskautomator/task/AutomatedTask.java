@@ -121,11 +121,11 @@ public class AutomatedTask implements ConfigurationSerializable {
     @NotNull
     public String nextExecutionFormatted() {
         if (!running) {
-            return "None";
+            return "Now";
         }
         return DurationFormatUtils.formatDuration(
             nextExecutionInMillis(),
-            "mm:ss"
+            "dd:hh:mm"
         );
     }
 

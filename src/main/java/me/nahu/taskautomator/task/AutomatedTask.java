@@ -1,10 +1,13 @@
 package me.nahu.taskautomator.task;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import me.nahu.taskautomator.TaskAutomatorPlugin;
 import me.nahu.taskautomator.utils.Utilities;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,34 +19,37 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class AutomatedTask implements ConfigurationSerializable {
     private final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
     private static final Plugin PLUGIN = TaskAutomatorPlugin.getPlugin(TaskAutomatorPlugin.class);
 
-    private final String name;
+    private String name;
     private final Duration duration;
     private long lastExecution;
+    private int commandStep;
     private final boolean repeated;
     private boolean running = false;
-    private List<String> commands;
+    private final Map<Integer, List<String>> commands;
 
     private BukkitTask task;
 
     public AutomatedTask(
-        @NotNull String name,
         @NotNull Duration duration,
         long lastExecution,
+        int commandStep,
         boolean repeated,
         boolean running,
-        @NotNull List<String> commands
+        @NotNull Map<Integer, List<String>> commands
     ) {
-        this.name = name;
         this.duration = duration;
         this.lastExecution = lastExecution;
+        this.commandStep = commandStep;
         this.repeated = repeated;
         this.commands = commands;
         if (running) startTask();
@@ -54,12 +60,16 @@ public class AutomatedTask implements ConfigurationSerializable {
         return name;
     }
 
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
+
     public long getLastExecution() {
         return lastExecution;
     }
 
-    public void setLastExecution(long lastExecution) {
-        this.lastExecution = lastExecution;
+    public int getCommandStep() {
+        return commandStep;
     }
 
     public boolean isRepeated() {
@@ -70,17 +80,9 @@ public class AutomatedTask implements ConfigurationSerializable {
         return running;
     }
 
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
     @NotNull
-    public List<String> getCommands() {
-        return commands;
-    }
-
-    public void setCommands(@NotNull List<String> commands) {
-        this.commands = commands;
+    public ImmutableCollection<String> getCommands() {
+        return ImmutableList.copyOf(commands.get(commandStep));
     }
 
     public void startTask() {
@@ -89,12 +91,17 @@ public class AutomatedTask implements ConfigurationSerializable {
         this.task = new BukkitRunnable() {
             @Override
             public void run() {
-                commands.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
-                if (repeated) {
-                    startTask();
-                    return;
+                getCommands().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
+                commandStep++;
+
+                if (commandStep > commands.size()) {
+                    commandStep = 1;
+                    if (!repeated) {
+                        running = false;
+                        return;
+                    }
                 }
-                running = false;
+                startTask();
             }
         }.runTaskLater(
             PLUGIN,
@@ -135,29 +142,30 @@ public class AutomatedTask implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         return ImmutableMap.<String, Object>builder()
-            .put("name", name)
-            .put("duration", String.valueOf(duration.toMillis()).concat("ms"))
+            .put("duration", duration.toMillis() + "ms")
             .put("last-execution", lastExecution)
+            .put("command-step", commandStep)
             .put("repeated", repeated)
             .put("running", running)
             .put("commands", commands)
             .build();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @NotNull
     public static AutomatedTask deserialize(@NotNull Map<String, Object> args) {
-        String name = (String) args.get("name");
         Duration duration = Utilities.parseDuration((String) args.get("duration"));
         long lastExecution = args.containsKey("last-execution") ?
             (long) args.get("last-execution") : System.currentTimeMillis();
+        int commandStep = args.containsKey("command-step") ? (int) args.get("command-step") : 1;
         boolean repeated = args.containsKey("repeated") && (boolean) args.get("repeated");
         boolean running = args.containsKey("running") && (boolean) args.get("running");
-        List<String> commands = (List<String>) args.get("commands");
+
+        LinkedHashMap<Integer, List<String>> commands = (LinkedHashMap) args.get("commands");
         return new AutomatedTask(
-            name,
             duration,
             lastExecution,
+            commandStep,
             repeated,
             running,
             commands

@@ -22,6 +22,8 @@ public class AutomatedTaskCommand extends BaseCommand {
 
     private final String errorTaskRunningMessage;
     private final String errorTaskNotRunningMessage;
+    private final String startedTaskMessage;
+    private final String stoppedTaskMessage;
 
     private final List<String> statusMessage;
     private final List<String> listMessage;
@@ -30,6 +32,8 @@ public class AutomatedTaskCommand extends BaseCommand {
         this.tasksManager = tasksManager;
         this.errorTaskRunningMessage = configuration.getString("error-task-running", "N/A");
         this.errorTaskNotRunningMessage = configuration.getString("error-task-not-running", "N/A");
+        this.startedTaskMessage = configuration.getString("successfully-started-task", "N/A");
+        this.stoppedTaskMessage = configuration.getString("successfully-stopped-task", "N/A");
         this.statusMessage = configuration.getStringList("automated-task-status");
         this.listMessage = configuration.getStringList("automated-task-list");
     }
@@ -46,6 +50,7 @@ public class AutomatedTaskCommand extends BaseCommand {
             return;
         }
         automatedTask.startTask();
+        sendMessage(sender, MineDown.parse(startedTaskMessage, "task_name", automatedTask.getName()));
     }
 
     @Subcommand("stop")
@@ -60,6 +65,7 @@ public class AutomatedTaskCommand extends BaseCommand {
             return;
         }
         automatedTask.stopTask();
+        sendMessage(sender, MineDown.parse(stoppedTaskMessage, "task_name", automatedTask.getName()));
     }
 
     @Subcommand("status")
@@ -77,6 +83,7 @@ public class AutomatedTaskCommand extends BaseCommand {
                 "task_running", String.valueOf(automatedTask.isRunning()),
                 "task_last_execution", automatedTask.lastExecutionFormatted(),
                 "task_next_execution", automatedTask.nextExecutionFormatted(),
+                "task_command_step", String.valueOf(automatedTask.getCommandStep()),
                 "task_commands", StringUtils.join(automatedTask.getCommands(), ", ")
             ))
             .forEach(component -> sendMessage(sender, component));

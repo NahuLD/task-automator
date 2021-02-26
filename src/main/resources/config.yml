@@ -1,15 +1,25 @@
+# Message sent when you try to start a task that hasn't stopped.
 error-task-running: '&red&You cannot start a task while it''s running!'
 
+# Message sent when you try to stop a task that hasn't started.
 error-task-not-running: '&red&You cannot stop a task if it''s not running!'
 
+# Message sent when a task was started successfully.
+successfully-started-task: '&green&Successfully started task: &yellow&%task_name%'
+
+# Message sent when a task was stopped successfully.
+successfully-stopped-task: '&green&Successfully stopped task: &yellow&%task_name%'
+
+# Task status message list.
 automated-task-status:
   - '&yellow&Status for task: &green&%task_name%'
   - '&gray&Repeated: &dark_green&%task_repeated%'
   - '&gray&Running: &dark_green&%task_running%'
   - '&gray&Last execution: &dark_green&%task_last_execution%'
   - '&gray&Next execution: &dark_green&%task_next_execution%'
-  - '&gray&Commands: &dark_gray&%task_commands%'
+  - '&gray&Commands for step %task_command_step%: &dark_gray&%task_commands%'
 
+# Tasks list message.
 automated-task-list:
   - '&green&Tasks (click them to see status)'
   - '&gray&- [%task_name%](color=blue run_command=/at status %task_name% show_text=Click to see the status!)'

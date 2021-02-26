@@ -42,7 +42,11 @@ public class AutomatedTasksManager {
     @NotNull
     public Map<String, AutomatedTask> loadTasks() {
         return configuration.getKeys(false).stream()
-            .map(section -> (AutomatedTask) configuration.get(section))
+            .map(section -> {
+                AutomatedTask task = (AutomatedTask) configuration.get(section);
+                task.setName(section);
+                return task;
+            })
             .collect(Collectors.toMap(AutomatedTask::getName, Function.identity()));
     }
 }

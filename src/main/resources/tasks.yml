@@ -1,6 +1,6 @@
 testing:
   ==: me.nahu.taskautomator.task.AutomatedTask
-  duration: '1m'
+  duration: '1d'
   repeated: false
   commands:
     1:
@@ -11,7 +11,7 @@ testing:
       - say this is the second step
 testing-repeating:
   ==: me.nahu.taskautomator.task.AutomatedTask
-  duration: '30s'
+  duration: '30m'
   repeated: true
   commands:
     1:

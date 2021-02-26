@@ -125,7 +125,7 @@ public class AutomatedTask implements ConfigurationSerializable {
         }
         return DurationFormatUtils.formatDuration(
             nextExecutionInMillis(),
-            "dd:hh:mm"
+            "dd:HH:mm"
         );
     }
 

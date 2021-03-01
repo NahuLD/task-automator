@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.List;
 
 import static me.nahu.taskautomator.utils.Utilities.sendMessage;
@@ -22,9 +23,11 @@ public class AutomatedTaskCommand extends BaseCommand {
 
     private final String errorTaskRunningMessage;
     private final String errorTaskNotRunningMessage;
+    private final String errorOccurredMessage;
     private final String startedTaskMessage;
     private final String stoppedTaskMessage;
     private final String skippedStepMessage;
+    private final String reloadedTasksMessage;
 
     private final List<String> statusMessage;
     private final List<String> listMessage;
@@ -33,9 +36,11 @@ public class AutomatedTaskCommand extends BaseCommand {
         this.tasksManager = tasksManager;
         this.errorTaskRunningMessage = configuration.getString("error-task-running", "N/A");
         this.errorTaskNotRunningMessage = configuration.getString("error-task-not-running", "N/A");
+        this.errorOccurredMessage = configuration.getString("error-occurred-while-reloading", "N/A");
         this.startedTaskMessage = configuration.getString("successfully-started-task", "N/A");
         this.stoppedTaskMessage = configuration.getString("successfully-stopped-task", "N/A");
         this.skippedStepMessage = configuration.getString("successfully-skipped-step", "N/A");
+        this.reloadedTasksMessage = configuration.getString("successfully-reloaded-tasks", "N/A");
         this.statusMessage = configuration.getStringList("automated-task-status");
         this.listMessage = configuration.getStringList("automated-task-list");
     }
@@ -106,6 +111,20 @@ public class AutomatedTaskCommand extends BaseCommand {
                 "task_command_step", String.valueOf(automatedTask.getCommandStep())
             )
         );
+    }
+
+    @Subcommand("reload")
+    @CommandPermission("automatedtask.reload")
+    public void reload(
+        @NotNull CommandSender sender
+    ) {
+        try {
+            tasksManager.reload();
+            sendMessage(sender, MineDown.parse(reloadedTasksMessage));
+        } catch (IOException e) {
+            e.printStackTrace();
+            sendMessage(sender, MineDown.parse(errorOccurredMessage));
+        }
     }
 
     @Default

@@ -4,6 +4,9 @@ error-task-running: '&red&You cannot start a task while it''s running!'
 # Message sent when you try to stop a task that hasn't started.
 error-task-not-running: '&red&You cannot stop a task if it''s not running!'
 
+# Message sent when an unexpected error occurred while reloading.
+error-occurred-while-reloading: '&red&An unexpected error occurred while trying to reload.'
+
 # Message sent when a task was started successfully.
 successfully-started-task: '&green&Successfully started task: &yellow&%task_name%'
 
@@ -12,6 +15,9 @@ successfully-stopped-task: '&green&Successfully stopped task: &yellow&%task_name
 
 # Message sent when you skip a step.
 successfully-skipped-step: '&green&Successfully skipped a step to step: &yellow&%task_command_step%'
+
+# Message sent when tasks were reloaded successfully.
+successfully-reloaded-tasks: '&green&Successfully reloaded all tasks and updated their information'
 
 # Task status message list.
 automated-task-status:

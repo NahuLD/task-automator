@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class AutomatedTasksManager {
-    private final Map<String, AutomatedTask> tasks;
+    private Map<String, AutomatedTask> tasks;
 
     private final File tasksFolder;
     private final YamlConfiguration configuration;
@@ -49,7 +49,7 @@ public class AutomatedTasksManager {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void saveTask(@NotNull AutomatedTask automatedTask) throws IOException {
+    private void saveTask(@NotNull AutomatedTask automatedTask) throws IOException {
         File taskFile = new File(tasksFolder, automatedTask.getName().concat(".yml"));
         taskFile.createNewFile();
 
@@ -59,6 +59,12 @@ public class AutomatedTasksManager {
         configuration.set("running", automatedTask.isRunning());
 
         configuration.save(taskFile);
+    }
+
+    public void reload() throws IOException {
+        saveTasks();
+        this.tasks.clear();
+        this.tasks = loadTasks();
     }
 
     @NotNull

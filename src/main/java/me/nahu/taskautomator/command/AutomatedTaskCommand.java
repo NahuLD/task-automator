@@ -24,6 +24,7 @@ public class AutomatedTaskCommand extends BaseCommand {
     private final String errorTaskNotRunningMessage;
     private final String startedTaskMessage;
     private final String stoppedTaskMessage;
+    private final String skippedStepMessage;
 
     private final List<String> statusMessage;
     private final List<String> listMessage;
@@ -34,6 +35,7 @@ public class AutomatedTaskCommand extends BaseCommand {
         this.errorTaskNotRunningMessage = configuration.getString("error-task-not-running", "N/A");
         this.startedTaskMessage = configuration.getString("successfully-started-task", "N/A");
         this.stoppedTaskMessage = configuration.getString("successfully-stopped-task", "N/A");
+        this.skippedStepMessage = configuration.getString("successfully-skipped-step", "N/A");
         this.statusMessage = configuration.getStringList("automated-task-status");
         this.listMessage = configuration.getStringList("automated-task-list");
     }
@@ -87,6 +89,23 @@ public class AutomatedTaskCommand extends BaseCommand {
                 "task_commands", StringUtils.join(automatedTask.getCommands(), ", ")
             ))
             .forEach(component -> sendMessage(sender, component));
+    }
+
+    @Subcommand("nextstep")
+    @CommandPermission("automatedtask.nextstep")
+    @CommandCompletion("@automatedtask")
+    public void nextStep(
+        @NotNull CommandSender sender,
+        @NotNull AutomatedTask automatedTask
+    ) {
+        automatedTask.toNextStep();
+        sendMessage(
+            sender,
+            MineDown.parse(
+                skippedStepMessage,
+                "task_command_step", String.valueOf(automatedTask.getCommandStep())
+            )
+        );
     }
 
     @Default

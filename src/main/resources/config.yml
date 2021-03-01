@@ -10,6 +10,9 @@ successfully-started-task: '&green&Successfully started task: &yellow&%task_name
 # Message sent when a task was stopped successfully.
 successfully-stopped-task: '&green&Successfully stopped task: &yellow&%task_name%'
 
+# Message sent when you skip a step.
+successfully-skipped-step: '&green&Successfully skipped a step to step: &yellow&%task_command_step%'
+
 # Task status message list.
 automated-task-status:
   - '&yellow&Status for task: &green&%task_name%'

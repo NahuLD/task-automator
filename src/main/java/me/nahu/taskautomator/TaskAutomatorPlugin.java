@@ -18,7 +18,6 @@ public class TaskAutomatorPlugin extends JavaPlugin {
     }
 
     private BukkitCommandManager commandManager;
-
     private AutomatedTasksManager tasksManager;
 
     @Override
@@ -26,7 +25,7 @@ public class TaskAutomatorPlugin extends JavaPlugin {
         saveResource("tasks.yml", false);
         saveResource("config.yml", false);
 
-        tasksManager = new AutomatedTasksManager(new File(getDataFolder(), "tasks.yml"));
+        tasksManager = new AutomatedTasksManager(getDataFolder());
 
         commandManager = new BukkitCommandManager(this);
         commandManager.getCommandCompletions().registerAsyncCompletion(

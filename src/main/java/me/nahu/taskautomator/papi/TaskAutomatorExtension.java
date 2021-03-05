@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class TaskAutomatorExtension extends PlaceholderExpansion {
-    private static final String PLACEHOLDER_FORMAT = "_next_execution_formatted";
+    private static final String PLACEHOLDER_FORMAT = "_next";
 
     private final TaskAutomatorPlugin plugin;
     private final AutomatedTasksManager tasksManager;

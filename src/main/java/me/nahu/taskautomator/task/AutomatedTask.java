@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,14 +86,15 @@ public class AutomatedTask implements ConfigurationSerializable {
     }
 
     @NotNull
-    public ImmutableCollection<String> getCommands() {
-        return ImmutableList.copyOf(commands.get(commandStep));
+    public Collection<String> getCommands() {
+        return commands.get(commandStep);
     }
 
     public void startTask() {
         if (!running) {
             this.lastExecution = System.currentTimeMillis();
         }
+
         this.running = true;
         this.task = new BukkitRunnable() {
             @Override
@@ -101,8 +103,8 @@ public class AutomatedTask implements ConfigurationSerializable {
                 if (toNextStep()) {
                     return;
                 }
-                startTask();
                 lastExecution = System.currentTimeMillis();
+                startTask();
             }
         }.runTaskLater(
             PLUGIN,
@@ -111,8 +113,14 @@ public class AutomatedTask implements ConfigurationSerializable {
     }
 
     public void stopTask() {
+        this.stopTask(true);
+    }
+
+    public void stopTask(boolean stopRunning) {
         task.cancel();
-        running = false;
+        if (stopRunning) {
+            running = false;
+        }
     }
 
     public boolean toNextStep() {

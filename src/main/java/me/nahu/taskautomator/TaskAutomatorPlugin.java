@@ -5,6 +5,7 @@ import co.aikar.commands.InvalidCommandArgument;
 import me.nahu.taskautomator.command.AutomatedTaskCommand;
 import me.nahu.taskautomator.papi.TaskAutomatorExtension;
 import me.nahu.taskautomator.task.AutomatedTask;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,7 +26,11 @@ public class TaskAutomatorPlugin extends JavaPlugin {
         saveResource("tasks.yml", false);
         saveResource("config.yml", false);
 
-        tasksManager = new AutomatedTasksManager(getDataFolder());
+        try {
+            tasksManager = new AutomatedTasksManager(getDataFolder());
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
 
         commandManager = new BukkitCommandManager(this);
         commandManager.getCommandCompletions().registerAsyncCompletion(

@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -121,7 +122,7 @@ public class AutomatedTaskCommand extends BaseCommand {
         try {
             tasksManager.reload();
             sendMessage(sender, MineDown.parse(reloadedTasksMessage));
-        } catch (IOException e) {
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
             sendMessage(sender, MineDown.parse(errorOccurredMessage));
         }

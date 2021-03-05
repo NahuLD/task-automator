@@ -3,6 +3,7 @@ package me.nahu.taskautomator;
 import com.google.common.collect.ImmutableSet;
 import me.nahu.taskautomator.task.AutomatedTask;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,16 +18,18 @@ public class AutomatedTasksManager {
     private Map<String, AutomatedTask> tasks;
 
     private final File tasksFolder;
+    private final File configurationFile;
+
     private final YamlConfiguration configuration;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public AutomatedTasksManager(@NotNull File dataFolder) {
+    public AutomatedTasksManager(@NotNull File dataFolder) throws IOException, InvalidConfigurationException {
         this.tasksFolder = new File(dataFolder, "tasks-data");
         if (!this.tasksFolder.exists()) {
             this.tasksFolder.mkdir();
         }
 
-        File configurationFile = new File(dataFolder, "tasks.yml");
+        this.configurationFile = new File(dataFolder, "tasks.yml");
         this.configuration = YamlConfiguration.loadConfiguration(configurationFile);
 
         this.tasks = loadTasks();
@@ -50,6 +53,8 @@ public class AutomatedTasksManager {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void saveTask(@NotNull AutomatedTask automatedTask) throws IOException {
+        automatedTask.stopTask(false);
+
         File taskFile = new File(tasksFolder, automatedTask.getName().concat(".yml"));
         taskFile.createNewFile();
 
@@ -61,14 +66,15 @@ public class AutomatedTasksManager {
         configuration.save(taskFile);
     }
 
-    public void reload() throws IOException {
+    public void reload() throws IOException, InvalidConfigurationException {
         saveTasks();
         this.tasks.clear();
         this.tasks = loadTasks();
     }
 
     @NotNull
-    public Map<String, AutomatedTask> loadTasks() {
+    public Map<String, AutomatedTask> loadTasks() throws IOException, InvalidConfigurationException {
+        this.configuration.load(configurationFile);
         return configuration.getKeys(false).stream()
             .map(section -> {
                 AutomatedTask task = (AutomatedTask) configuration.get(section);
@@ -80,7 +86,6 @@ public class AutomatedTasksManager {
                     new File(tasksFolder, automatedTask.getName().concat(".yml"))
                 );
 
-                System.out.println(taskConfiguration.contains("last-execution"));
                 long lastExecution = taskConfiguration.getLong("last-execution", System.currentTimeMillis());
                 int commandStep = taskConfiguration.getInt("command-step", 1);
                 boolean running = taskConfiguration.getBoolean("running", false);

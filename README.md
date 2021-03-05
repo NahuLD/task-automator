@@ -2,19 +2,22 @@
 Automate tasks and the execution time in between steps. The progress is kept even after reboots and restarts.
 
 ## Permission nodes
-Node               | Description
- ------------------|----------------------------------------
-itemshop.*         | Access to all subcommands.
-itemshop.sell      | Access to the sell UI.
-itemshop.open      | Open the sell UI to any online player.
-itemshop.admin     | Access to the admin UI.
+Node                   | Description
+ ----------------------|----------------------------------------
+automatedtask.*        | Access to all subcommands.
+automatedtask.start    | Access to the start command.
+automatedtask.stop     | Access to the stop command.
+automatedtask.status   | Access to the status command.
+automatedtask.nextstep | Access to the next step command.
+automatedtask.reload   | Access to the reload command.
+automatedtask.list     | Access to the list command.
 
 ## Placeholders for PAPI
 _Requests MUST be appended with a Player._
 
 Placeholder                                                | Return             | More Info
  ----------------------------------------------------------|--------------------|---------------------------------------------------------------------
-%taskautomator_**<task-name>**_next_execution_formatted%   | dd:hh:mm           | Time formatted in days, hours and minutes.
+%taskautomator_**(task-name)**_next%   | dd:hh:mm           | Time formatted in days, hours and minutes.
 
 ## Configurable Messages Syntax
 

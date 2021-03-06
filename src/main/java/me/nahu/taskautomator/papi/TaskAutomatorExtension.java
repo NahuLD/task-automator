@@ -11,7 +11,8 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class TaskAutomatorExtension extends PlaceholderExpansion {
-    private static final String PLACEHOLDER_FORMAT = "_next";
+    private static final String PLACEHOLDER_FORMAT_NORMAL = "_next";
+    private static final String PLACEHOLDER_FORMAT_SECONDS = "_next_seconds";
 
     private final TaskAutomatorPlugin plugin;
     private final AutomatedTasksManager tasksManager;
@@ -43,12 +44,17 @@ public class TaskAutomatorExtension extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        if (!params.endsWith(PLACEHOLDER_FORMAT)) {
+        Optional<AutomatedTask> found = tasksManager.getTaskByName(
+            params.replace(PLACEHOLDER_FORMAT_SECONDS, "")
+                .replace(PLACEHOLDER_FORMAT_NORMAL, "")
+
+        );
+        if (!found.isPresent()) {
             return "N/A";
         }
-        Optional<AutomatedTask> found = tasksManager.getTaskByName(
-            params.replace(PLACEHOLDER_FORMAT, "")
-        );
-        return found.map(AutomatedTask::nextExecutionFormatted).orElse("N/A");
+        if (params.endsWith(PLACEHOLDER_FORMAT_SECONDS)) {
+            return found.get().nextExecutionFormatted().split(":")[3];
+        }
+        return found.get().nextExecutionFormatted(false);
     }
 }

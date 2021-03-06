@@ -117,7 +117,9 @@ public class AutomatedTask implements ConfigurationSerializable {
     }
 
     public void stopTask(boolean stopRunning) {
-        task.cancel();
+        if (task != null) {
+            task.cancel();
+        }
         if (stopRunning) {
             running = false;
         }
@@ -141,12 +143,17 @@ public class AutomatedTask implements ConfigurationSerializable {
 
     @NotNull
     public String nextExecutionFormatted() {
+        return nextExecutionFormatted(true);
+    }
+
+    @NotNull
+    public String nextExecutionFormatted(boolean seconds) {
         if (!running) {
             return "Now";
         }
         return DurationFormatUtils.formatDuration(
             nextExecutionInMillis(),
-            "dd:HH:mm"
+            seconds ? "dd:HH:mm:ss" : "dd:HH:mm"
         );
     }
 
